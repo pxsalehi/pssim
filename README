@@ -1,0 +1,19 @@
+Compile with JDK 1.6 or compliance level 1.6
+
+Execution seems to work with JDK 1.7 or lower only. Compiling with level 1.6 and running with 1.8 gives LVTT errors.
+
+http://www.cs.technion.ac.il/~gabik/Jist-Swans/java1.5/index.html
+------------------------------------------------------------------------
+- If you receive the exception LVTT entry not found, the class that causes the exception while being
+  rewritten, needs to be compiled with -g:lines,source. The option -g:vars MUST not be included, as 
+  it will produce the same exception. In Eclipse: Uncheck option "Add variable attributes to generated 
+  class files (used by the debugger )". Leave options "Add line number attributes to generated class 
+  files (used by the debugger )" and "Add source file name to generated class files 
+  (used by the debugger )" checked.
+  
+- Updated BCEL to 5.2, used by JiST:
+  You will get two compilation errors in classes jist.runtime.RemoteJist.RemoteRepository and 
+  jist.runtime.RewriterVerify. Just let Eclipse fix them automatically. 
+  Implement default jist.runtime.RemoteJist.RemoteRepository.getClassPath() method that returns null.
+  Define jist.runtime.RewriterVerify.checkme() to throw ClassNotFoundException or put the call to 
+  org.apache.bcel.Repository.lookupClass(name) inside try ... catch.
