@@ -1,6 +1,5 @@
 package de.tum.msrg.message;
 
-import de.tum.msrg.lpbcast.Gossiper;
 import de.tum.msrg.topology.NodeInfo;
 
 import java.util.ArrayList;
@@ -12,7 +11,6 @@ public class PubMessage extends Message {
 	private boolean switchToGossip = false;
 	private boolean switchToOverlay = false;
 	private boolean alreadySwitched = false;
-	private List<Gossiper> view = null;
 	// whether this pub message was send using a direct link from the publisher
 	private boolean directSend = false;
 
@@ -32,8 +30,6 @@ public class PubMessage extends Message {
 		switchToGossip = msg.switchToGossip();
 		switchToOverlay = msg.switchToOverlay();
 		alreadySwitched = msg.alreadySwitched;
-		if(msg.getView() != null)
-			view = new ArrayList<Gossiper>(msg.getView());
 	}
 	
 	@Override
@@ -59,14 +55,6 @@ public class PubMessage extends Message {
 
 	public void setSwitchToOverlay(boolean switchToOverlay) {
 		this.switchToOverlay = switchToOverlay;
-	}
-
-	public List<Gossiper> getView() {
-		return view;
-	}
-
-	public void setView(List<Gossiper> view) {
-		this.view = view;
 	}
 
 	public boolean isAlreadySwitched() {

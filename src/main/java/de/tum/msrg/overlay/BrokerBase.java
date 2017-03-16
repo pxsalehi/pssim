@@ -1,7 +1,7 @@
 package de.tum.msrg.overlay;
 
 import de.tum.msrg.message.Subscription;
-import java.de.tum.msrg.baseline.Failable;
+import de.tum.msrg.baseline.Failable;
 import jist.runtime.JistAPI;
 import de.tum.msrg.message.Message;
 import de.tum.msrg.message.Publication;

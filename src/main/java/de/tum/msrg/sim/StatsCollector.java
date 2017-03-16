@@ -2,7 +2,6 @@ package de.tum.msrg.sim;
 
 import java.util.*;
 
-import de.tum.msrg.lpbcast.Event;
 import de.tum.msrg.message.BatchedPub;
 import de.tum.msrg.message.PubMessage;
 import de.tum.msrg.message.Publication;
@@ -176,16 +175,6 @@ public class StatsCollector {
 		incrementTotalDeliveredPubCount();
 		updateLastPubDeliveryTime(time);
 		++deliveryPerTopic[pub.getPubClass()];
-	}
-
-	public void pubDeliveredViaGossip(Event e, long time) {
-		updatePubThroughput(time);
-		++totalPubsDeliveredViaGossip;
-		gossipDeliveryHopcounts.add(e.getHopcount());
-		gossipDeliveryLatencies.add((long) e.getLatency());
-		incrementTotalDeliveredPubCount();
-		updateLastPubDeliveryTime(e.getLatency());
-		++deliveryPerTopic[e.getPub().getPubClass()];
 	}
 
 	public void pubDeliveredViaDirectLink(int brokerID, PubMessage pmsg, long time) {

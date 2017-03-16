@@ -1,4 +1,4 @@
-package java.de.tum.msrg.baseline;
+package de.tum.msrg.baseline;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
