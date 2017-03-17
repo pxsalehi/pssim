@@ -1,25 +1,18 @@
-package de.tum.msrg.baseline;
+package de.tum.msrg.pubsub;
 
 import de.tum.msrg.AllTests;
-import de.tum.msrg.config.ConfigParserException;
 import de.tum.msrg.config.Configuration;
 import de.tum.msrg.message.Advertisement;
 import de.tum.msrg.message.Publication;
 import de.tum.msrg.message.Subscription;
-import de.tum.msrg.overlay.PubSubNodeWload;
-import de.tum.msrg.overlay.RuntimeSimException;
-import de.tum.msrg.resources.topologies.Topologies;
 import de.tum.msrg.sim.StatsCollector;
 import de.tum.msrg.topology.NodeInfo;
 import de.tum.msrg.topology.Topology;
 import org.apache.commons.collections4.CollectionUtils;
 import org.junit.After;
-import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -29,8 +22,8 @@ import static org.junit.Assert.*;
 public class TestBaselineWithLinkCongestion {
     private Configuration config;
     private Topology topology;
-    private BaselineOverlay overlay;
-    BaselineBroker b0, b1, b2, b3, b4, b5;
+    private PSOverlay overlay;
+    PSBroker b0, b1, b2, b3, b4, b5;
     int seed;
 
 //    @Before

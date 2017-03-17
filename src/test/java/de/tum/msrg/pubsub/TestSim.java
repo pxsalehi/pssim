@@ -1,4 +1,4 @@
-package de.tum.msrg.baseline;
+package de.tum.msrg.pubsub;
 
 /**
  * Created by pxsalehi on 21.12.15.

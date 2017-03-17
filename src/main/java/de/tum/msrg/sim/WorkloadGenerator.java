@@ -1,11 +1,9 @@
 package de.tum.msrg.sim;
 
 import java.io.*;
-import java.lang.management.ManagementFactory;
-import java.lang.management.MemoryUsage;
 import java.util.*;
 
-import de.tum.msrg.baseline.ConfigKeys;
+import de.tum.msrg.pubsub.ConfigKeys;
 import de.tum.msrg.config.ConfigParserException;
 import de.tum.msrg.config.Configuration;
 import de.tum.msrg.message.*;
@@ -160,11 +158,8 @@ public class WorkloadGenerator {
 		generateAdvertisements(pubNodes);
 		generateSubscriptions(subNodes);
 		generatePublications(pubNodes);
-//		MemoryUsage heapMemoryUsage = ManagementFactory.getMemoryMXBean().getHeapMemoryUsage();
-//		System.out.println("Memory usage: " + (int)(heapMemoryUsage.getUsed() / Math.pow(2, 30)));
 		System.out.println("Perform matching...");
 		performMatching(allNodes);
-//		System.out.println("Memory usage: " + (int)(heapMemoryUsage.getUsed() / Math.pow(2, 30)));
 		for(PubSubNodeWload node: allNodes)
 			for(Publication pub: node.getPubs())
 				StatsCollector.getInstance().pubGenerated(pub, node.getNode());
@@ -342,36 +337,6 @@ public class WorkloadGenerator {
 		}
 
 		System.out.println("Finished matching!");
-		// set matching subscriptions
-		// find nodes with at least one matching subscription
-		// TODO: change these lists to set
-//		List<PubSubNodeWload> targetNodes;
-//		List<Integer> matchingSubscriptions;
-//		List<NodeInfo> targetNodeInfos;
-//		for (PubSubNodeWload node : nodes) {
-//			for (Publication pub : node.getPubs()) {
-//				targetNodes = new ArrayList<PubSubNodeWload>();
-//				matchingSubscriptions = new ArrayList<Integer>();
-//				for (PubSubNodeWload target : nodes) {
-//					for (Subscription targetSub : target.getSubs()) {
-//						if (targetSub.isMatches(pub)) {
-//							//targetSub.addMatchingAdvs(pub.getMatchingAdv());
-//							if (!targetNodes.contains(target))
-//								targetNodes.add(target);
-//							if(!matchingSubscriptions.contains(targetSub.getID()))
-//								matchingSubscriptions.add(targetSub.getID());
-//							pub.incrementMatchingSubs(target.getNode());
-//						}
-//					}
-//				}
-//				// create a new subscriber node set, DO NOT clear the old one!
-//				targetNodeInfos = new ArrayList<NodeInfo>();
-//				for (PubSubNodeWload targetNode : targetNodes)
-//					targetNodeInfos.add(targetNode.getNode());
-//				pub.setSubscribers(targetNodeInfos);
-//				pub.setMatchingSubscriptions(matchingSubscriptions);
-//			}
-//		}
 	}
 	
 	public List<PubSubNodeWload> getWorkload() {
@@ -424,55 +389,5 @@ public class WorkloadGenerator {
 
 	public float getZipfSkew() {
 		return zipfSkew;
-	}
-
-	public static void main(String[] args) {
-		int noOfClasses = 50;
-		int noOfSubs = 10000;
-		RandomGenerator randomGen = new JDKRandomGenerator();
-		ZipfDistribution classPopZipfDist = new ZipfDistribution(randomGen, noOfClasses, 0.001);
-		UniformIntegerDistribution classPopUniformDist = new UniformIntegerDistribution(randomGen, 0, noOfClasses);
-		PoissonDistribution classPopPoissonDist = new PoissonDistribution(randomGen, noOfClasses/4,
-				PoissonDistribution.DEFAULT_EPSILON, PoissonDistribution.DEFAULT_MAX_ITERATIONS);
-		NormalDistribution classPopGausDist = new NormalDistribution(noOfClasses/2.0, noOfClasses/6.0);
-		int[] pops = new int[noOfClasses];
-		System.out.println("UNIFORM:");
-		for(int i = 0; i < noOfSubs; ++i) {
-			int c = classPopUniformDist.sample();
-			if(c >= 0 && c < noOfClasses) ++pops[c];
-			else --i;
-		}
-		System.out.println(Arrays.toString(pops));
-
-		pops = new int[noOfClasses];
-		System.out.println("ZIPF 0.8:");
-		for(int i = 0; i < noOfSubs; ++i) {
-			int c = classPopZipfDist.sample()-1;
-			if(c >= 0 && c < noOfClasses) ++pops[c];
-			else --i;
-		}
-		Arrays.sort(pops);
-		System.out.println(Arrays.toString(pops));
-
-		pops = new int[noOfClasses];
-		System.out.println("POISSON 5:");
-		for(int i = 0; i < noOfSubs; ++i) {
-			int c = classPopPoissonDist.sample();
-			if(c >= 0 && c < noOfClasses) ++pops[c];
-			else --i;
-		}
-		//Arrays.sort(pops);
-		System.out.println(Arrays.toString(pops));
-
-		pops = new int[noOfClasses];
-		System.out.println("GAUSS:");
-		for(int i = 0; i < noOfSubs; ++i) {
-			int c = (int) classPopGausDist.sample();
-			if(c >= 0 && c < noOfClasses) ++pops[c];
-			else --i;
-		}
-		//Arrays.sort(pops);
-		System.out.println(Arrays.toString(pops));
-
 	}
 }

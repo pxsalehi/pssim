@@ -1,4 +1,4 @@
-package de.tum.msrg.baseline;
+package de.tum.msrg.pubsub;
 
 import java.io.IOException;
 
@@ -9,12 +9,12 @@ import de.tum.msrg.topology.Topology;
 import de.tum.msrg.config.Configuration;
 import de.tum.msrg.config.ConfigParserException;
 
-public class BaselineOverlay extends OverlayBase<BaselineBroker> {
+public class PSOverlay extends OverlayBase<PSBroker> {
 	
 	protected long seed;
 	protected long startPublishTime = -1;
 	
-	public BaselineOverlay(Configuration config, Topology topology, long seed) throws RuntimeSimException, ConfigParserException, IOException {
+	public PSOverlay(Configuration config, Topology topology, long seed) throws RuntimeSimException, ConfigParserException, IOException {
 		super(config, topology, seed);
 		this.seed = seed;
 		startPublishTime = config.getLongConfig(ConfigKeys.SIM_START_PUBLISH_TIME);
@@ -24,12 +24,12 @@ public class BaselineOverlay extends OverlayBase<BaselineBroker> {
 	@Override
 	protected void initUnderlay() throws ConfigParserException {
 		// instantiate underlay nodes and places brokers on underlay nodes
-		brokers = new BaselineBroker[noOfNodes];
+		brokers = new PSBroker[noOfNodes];
 		int noOfPhysicalNodes = physicalNetwork.getNoOfNodes();
 		int[] routerPerNode = new int[noOfPhysicalNodes];
 		for (int i = 0; i < noOfNodes; i++) {
 			int physicalNodeID = i;
-			brokers[i] = new BaselineBroker(topology.getNode(i), physicalNetwork.getNode(physicalNodeID), this, config);
+			brokers[i] = new PSBroker(topology.getNode(i), physicalNetwork.getNode(physicalNodeID), this, config);
 			routerPerNode[physicalNodeID]++;
 		}
 	}
@@ -55,7 +55,7 @@ public class BaselineOverlay extends OverlayBase<BaselineBroker> {
 		}
 		
 		public void startPublishing() {
-			for (BaselineBroker node : brokers) {
+			for (PSBroker node : brokers) {
 				node.getNodeSim().startPublishing();
 			}
 		}

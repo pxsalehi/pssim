@@ -2,7 +2,7 @@ package de.tum.msrg.underlay;
 
 import java.util.Random;
 
-import de.tum.msrg.baseline.ConfigKeys;
+import de.tum.msrg.pubsub.ConfigKeys;
 import de.tum.msrg.config.Configuration;
 import de.tum.msrg.topology.EdgeInfo;
 import de.tum.msrg.topology.NodeInfo;

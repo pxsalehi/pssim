@@ -1,0 +1,8 @@
+- update config file
+- pass map to create batch factor (only for capacity manager)
+- add input capacity
+- config as singleton
+- workload: load or generate
+- cleanup workload, create small classes for each part
+- support link drop rate
+- support java 8

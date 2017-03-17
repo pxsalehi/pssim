@@ -16,8 +16,6 @@ import java.util.Set;
  * Created by pxsalehi on 22.12.15.
  */
 public class BrokerBasicOperations {
-    private int SHOW_PROGRESS_INTERVAL = 100000;
-    private long lastProgressMark = 0;
     private BrokerBase broker;
     private BrokerBase.BrokerBaseSimInterface nodeProxy;
     private OverlayBase<? extends BrokerBase> overlay;
@@ -81,11 +79,6 @@ public class BrokerBasicOperations {
     public void doSendMessage(Message msg) {
         BrokerBase toNode = overlay.getBroker(msg.getToNode().getId());
         long time = JistAPI.getTime();
-        // print progress
-        if (time - lastProgressMark > SHOW_PROGRESS_INTERVAL  && broker.getId() % 50 == 0) {
-            lastProgressMark = time;
-            System.out.println("sim_time = " + lastProgressMark);
-        }
         if (broker.isDown())
             return;
         if (toNode.isDown(broker)) {
@@ -98,7 +91,7 @@ public class BrokerBasicOperations {
             if (SimLogger.isDebugEnabled()) {
                 SimLogger.debug("#SendingMessage broker=" + broker.getId() + " t=" + JistAPI.getTime() +
                         " pid=" + msg.getId() + " to=" + msg.getToNode() + " latency=" +
-                        (msg.getLatency() - msg.getCalculatedDelay()) + " hopcount=" + msg.getHopCount());
+                        msg.getLatency() + " hopcount=" + msg.getHopCount());
             }
             broker.incrementMessagesSent();
         }

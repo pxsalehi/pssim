@@ -6,9 +6,9 @@ import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
 @SuiteClasses({
-		de.tum.msrg.baseline.TestBaseline.class,
-		de.tum.msrg.baseline.TestBaselineWithLinkCongestion.class,
-		de.tum.msrg.baseline.TestBaselineWithBrokerOverloaded.class,
+		de.tum.msrg.pubsub.TestBaseline.class,
+		de.tum.msrg.pubsub.TestBaselineWithLinkCongestion.class,
+		de.tum.msrg.pubsub.TestBaselineWithBrokerOverloaded.class,
 		// test.baseline.TestSim.class,  // does not work with JUnit
 
 		de.tum.msrg.config.TestConfig.class,

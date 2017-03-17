@@ -2,7 +2,6 @@ package de.tum.msrg.sim;
 
 import java.util.*;
 
-import de.tum.msrg.message.BatchedPub;
 import de.tum.msrg.message.PubMessage;
 import de.tum.msrg.message.Publication;
 import de.tum.msrg.topology.NodeInfo;
@@ -230,11 +229,6 @@ public class StatsCollector {
 	public void pubSentViaBatching(Publication p) {
 		++totalPubsSentViaBatching;
 		++totalSentPubCount;
-	}
-
-	public void pubsSentViaBatching(Collection<BatchedPub> pubs) {
-		for(BatchedPub pub: pubs)
-			pubSentViaBatching(pub.pub);
 	}
 
 	public void pubSentViaDirectLink(Publication p) {

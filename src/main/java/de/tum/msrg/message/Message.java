@@ -14,7 +14,6 @@ public class Message implements Timeless {
 	}
 	// publication size in bytes
 	public static Integer MSG_SIZE = null;
-
 	protected static int msgCount = 0;
 	protected int id;
 	protected Type type;
@@ -22,16 +21,7 @@ public class Message implements Timeless {
 	protected NodeInfo toNode;
 	protected long latency;
 	protected int hopCount;
-	// normal time-to-live
-	protected short ttl;
-	/** 
-	 * probabilistic time-to-live, decremented each time the message is propagated 
-	 * based on a probabilistic decision
-	 */
-	protected short ttl_p;
 	protected NodeInfo lastHop;
-	protected boolean isGossip;
-	protected float calculatedDelay = 0;
 	
 	// this constructor is typically used for constructing a new message
 	public Message(Type type, NodeInfo fromNode, NodeInfo toNode) {
@@ -41,9 +31,7 @@ public class Message implements Timeless {
 		this.toNode = toNode;
 		latency = 0;
 		hopCount = 0;
-		ttl = ttl_p = 0;
 		lastHop = null;
-		isGossip = false;
 	}
 	
 	public Message(Type type, NodeInfo fromNode, NodeInfo toNode, int id) {
@@ -59,10 +47,7 @@ public class Message implements Timeless {
 		toNode = msg.getToNode();
 		hopCount = msg.getHopCount();
 		latency = msg.getLatency();
-		ttl = msg.getTtl();
-		ttl_p = msg.getTtl_p();
 		lastHop = msg.getLastHop();
-		isGossip = msg.isGossip();
 	}
 	
 	public Message clone() {
@@ -86,15 +71,7 @@ public class Message implements Timeless {
 		toNode = fromNode;
 		fromNode = tmpDest;
 	}
-	
-	public void decrementTTL() {
-		--ttl;
-	}
-	
-	public void decrementTTLp() {
-		--ttl_p;
-	}
-	
+
 	public String toString() {
 		String outString = String.format("%s ", type);
 		outString += String.format("%d @ %08d: ", id, JistAPI.getTime());
@@ -168,43 +145,11 @@ public class Message implements Timeless {
 		this.hopCount = hopCount;
 	}
 
-	public short getTtl() {
-		return this.ttl;
-	}
-	
-	public void setTtl(final short ttl_d) {
-		this.ttl = ttl_d;
-	}
-	
-	public short getTtl_p() {
-		return this.ttl_p;
-	}
-	
-	public void setTtl_p(final short ttl_p) {
-		this.ttl_p = ttl_p;
-	}
-	
 	public NodeInfo getLastHop() {
 		return this.lastHop;
 	}
 	
 	public void setLastHop(final NodeInfo lastHop) {
 		this.lastHop = lastHop;
-	}
-	
-	public boolean isGossip() {
-		return this.isGossip;
-	}
-	
-	public void setGossip(final boolean isGossip) {
-		this.isGossip = isGossip;
-	}
-	
-	public float getCalculatedDelay() {
-		return this.calculatedDelay;
-	}
-	
-	public void setCalculatedDelay(final float calculatedDelay) {
-		this.calculatedDelay = calculatedDelay;
 	}
 }

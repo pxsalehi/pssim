@@ -1,4 +1,4 @@
-package de.tum.msrg.baseline;
+package de.tum.msrg.pubsub;
 
 public class ConfigKeys {
 	public static String SIM_IS_ADV_BASED = "simulation.adv_based";

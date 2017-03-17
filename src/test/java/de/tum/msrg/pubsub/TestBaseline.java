@@ -1,4 +1,4 @@
-package de.tum.msrg.baseline;
+package de.tum.msrg.pubsub;
 
 import de.tum.msrg.AllTests;
 import de.tum.msrg.config.ConfigParserException;
@@ -31,8 +31,8 @@ import static org.junit.Assert.*;
 public class TestBaseline {
     private Configuration config;
     private Topology topology;
-    private BaselineOverlay overlay;
-    BaselineBroker b0, b1, b2, b3, b4, b5;
+    private PSOverlay overlay;
+    PSBroker b0, b1, b2, b3, b4, b5;
     int seed;
 
     @Before
@@ -43,7 +43,7 @@ public class TestBaseline {
         StatsCollector.getInstance().initialize(config.getIntConfig(ConfigKeys.SIM_NO_OF_NODES),
                                                 config.getIntConfig(ConfigKeys.WLOAD_NO_OF_CLASSES));
         topology = new Topology(new FileReader(Topologies.T01_DIR_PATH + "topology.txt"));
-        overlay = new BaselineOverlay(config, topology, seed);
+        overlay = new PSOverlay(config, topology, seed);
         overlay.initOverlay();
         b0 = overlay.getBroker(0); b1 = overlay.getBroker(1); b2 = overlay.getBroker(2);
         b3 = overlay.getBroker(3); b4 = overlay.getBroker(4); b5 = overlay.getBroker(5);

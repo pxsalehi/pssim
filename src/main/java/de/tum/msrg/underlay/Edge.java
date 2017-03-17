@@ -6,6 +6,7 @@ public class Edge {
 	protected Node toNode;
 	private int bandwidth;
 	private int delay;
+	// packet loss
 
 	public Edge(Network nw, Node fNode, Node tNode, int bw, int edgeDelay) {
 		myNetwork = nw;

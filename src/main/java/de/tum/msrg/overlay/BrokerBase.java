@@ -1,7 +1,7 @@
 package de.tum.msrg.overlay;
 
 import de.tum.msrg.message.Subscription;
-import de.tum.msrg.baseline.Failable;
+import de.tum.msrg.pubsub.Failable;
 import jist.runtime.JistAPI;
 import de.tum.msrg.message.Message;
 import de.tum.msrg.message.Publication;
@@ -28,7 +28,6 @@ public class BrokerBase implements Failable{
 	}
 
 	public static boolean applyLoadDelay = false;
-	public static int brokerCapacity = 1000;
 	protected int id;
 	protected NodeInfo nodeInfo;
 	// the simulation entity of th broker
@@ -134,7 +133,8 @@ public class BrokerBase implements Failable{
 				    restart();
 			}
 		}, end + 1);
-		SimLogger.info("#ScheduleRestart broker=" + getId() + " restart_time=" + (end + 1) + " time=" + JistAPI.getTime());
+		SimLogger.info("#ScheduleRestart broker=" + getId() + " restart_time=" + (end + 1) +
+						" time=" + JistAPI.getTime());
 	}
 
 	// if this node is currently down from the broker 'from'

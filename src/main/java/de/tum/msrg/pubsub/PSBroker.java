@@ -1,14 +1,12 @@
-package de.tum.msrg.baseline;
+package de.tum.msrg.pubsub;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 
 import de.tum.msrg.config.Configuration;
 import de.tum.msrg.message.PubMessage;
 import de.tum.msrg.message.Publication;
 import de.tum.msrg.sim.StatsCollector;
-import de.tum.msrg.utils.SimLogger;
 import jist.runtime.JistAPI;
 import de.tum.msrg.message.Message;
 import de.tum.msrg.overlay.*;
@@ -18,7 +16,7 @@ import de.tum.msrg.underlay.Node;
 /**
  * normal publish/subscribe broker with no fault-tolerance mechanism
  */
-public class BaselineBroker extends BrokerBase {
+public class PSBroker extends BrokerBase {
 	public class BaselineBrokerSimEntity implements BrokerBaseSimInterface {
 		private BrokerBase broker;
 		private BrokerBaseSimInterface nodeProxy;
@@ -94,28 +92,29 @@ public class BaselineBroker extends BrokerBase {
 		}
 	}
 	
-	public BaselineBroker(NodeInfo nodeInfo, Node physicalNode, OverlayBase<BaselineBroker> overlay, Configuration config) {
+	public PSBroker(NodeInfo nodeInfo, Node physicalNode, OverlayBase<PSBroker> overlay, Configuration config) {
 		this.nodeInfo = nodeInfo;
 		this.id = nodeInfo.getId();
 		underlayNode = physicalNode;
 		this.overlay = overlay;
 		overlayLinks = new ArrayList<OverlayLink>();
-		overlayRoutes = new BaselineBroker[overlay.getNoOfNodes()];
+		overlayRoutes = new PSBroker[overlay.getNoOfNodes()];
 		router = new Router(this, overlay);
 		this.applyLoadDelay = config.getBooleanConfig(ConfigKeys.SIM_APPLY_LOAD_DELAY);
 		this.pubSubLoad = new PubSubNodeWload(nodeInfo);
 		nodeSim = (new BaselineBrokerSimEntity(this)).getProxy();
 		brokerOutput = new BrokerOutput(this, nodeInfo.getThroughput());
+		// broker input
 	}
 	
-	protected BaselineBroker() {
+	protected PSBroker() {
 	}
 	
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) return true;
 		if (getClass() != obj.getClass()) return false;
-		BaselineBroker other = (BaselineBroker)obj;
+		PSBroker other = (PSBroker)obj;
 		if (getId() != other.getId()) return false;
 		return true;
 	}

@@ -4,9 +4,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class Advertisement {
-
 	private static int advCounter = 0;
-	private int advID; // unique ID across the system, not per node
+	// unique ID across the system, not per node
+	private int advID;
 	private int advClass;
 	private Attribute[] attributes;
 	private int sourceId = -1;
@@ -97,22 +97,6 @@ public class Advertisement {
 			return false;
 		return true;
 	}
-	
-	public static void main(String[] args) {
-		Set<Advertisement> advs = new HashSet<Advertisement>();
-		
-		Advertisement ad1 = new Advertisement();
-		ad1.setID(0);
-		advs.add(ad1);
-		Advertisement ad2 = new Advertisement();
-		ad2.setID(0);
-		advs.add(ad2);
-		Advertisement ad3 = new Advertisement();
-		ad3.setID(0);
-		advs.add(ad3);
-		System.out.println(advs.size());
-	}
-	
 
 	public boolean isMatches(Subscription sub) {
 		if (advClass != sub.getSubClass()) {

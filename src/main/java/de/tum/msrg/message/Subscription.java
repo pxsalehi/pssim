@@ -15,15 +15,11 @@ public class Subscription {
 	protected int subID; // unique ID across the system, not per node
 	protected int subClass;
 	protected Attribute[] attributes;
-	protected boolean locallyCovered;
-	protected List<Subscription> locallyCoveredSubs;
 	private Set<Advertisement> matchingAdvs = new HashSet<Advertisement>();
 	private NodeInfo subscriberNode;
 
 	public Subscription() {
 		subID = subCounter++;
-		locallyCovered = false;
-		locallyCoveredSubs = new ArrayList<Subscription>();
 	}
 
 	public Subscription(int subClass, Attribute[] attributes) {
@@ -104,58 +100,10 @@ public class Subscription {
 		return checkCover(covereeAttributes);
 	}
 
-	public void setLocallyCovered() {
-		locallyCovered = true;
-		locallyCoveredSubs.clear();
-	}
-
-	public boolean isLocallyCovered() {
-		return locallyCovered;
-	}
-
-	public void addLocallyCoveredSub(Subscription sub) {
-		locallyCoveredSubs.add(sub);
-	}
-
-	public int getLocallyCoveredCount() {
-		// every subscription covers itself
-		if (locallyCoveredSubs.size() == 0 && !locallyCovered) {
-			return 1;
-		}
-		return locallyCoveredSubs.size();
-	}
-
 	public float getArea() {
 		float area = 1;
 		for (Attribute attrib : attributes) {
 			area *= attrib.highVal - attrib.lowVal;
-		}
-		return area;
-	}
-
-	public float getLocallyCoveredArea() throws RuntimeSimException {
-		// initialize merged subscription area ranges
-		float[][] coveredRanges = new float[attributes.length][2];
-		for (int i = 0; i < attributes.length; i++) {
-			coveredRanges[i][0] = Float.MAX_VALUE;
-			coveredRanges[i][1] = 0;
-		}
-		// find the merged subscription area ranges
-		for (Subscription sub : locallyCoveredSubs) {
-			Attribute[] subAttribs = sub.getAttributes();
-			for (int i = 0; i < subAttribs.length; i++) {
-				if (subAttribs[i].lowVal < coveredRanges[i][0]) {
-					coveredRanges[i][0] = subAttribs[i].lowVal;
-				}
-				if (subAttribs[i].highVal > coveredRanges[i][1]) {
-					coveredRanges[i][1] = subAttribs[i].highVal;
-				}
-			}
-		}
-		// find the merged area
-		float area = 1;
-		for (int i = 0; i < attributes.length; i++) {
-			area *= (coveredRanges[i][1] - coveredRanges[i][0]);
 		}
 		return area;
 	}

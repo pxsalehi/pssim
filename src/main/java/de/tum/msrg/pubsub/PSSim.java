@@ -1,20 +1,11 @@
-package de.tum.msrg.baseline;
+package de.tum.msrg.pubsub;
 
 
 import java.io.*;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
 
-import de.tum.msrg.message.Advertisement;
-import de.tum.msrg.message.Attribute;
-import de.tum.msrg.message.Subscription;
-import de.tum.msrg.overlay.BrokerBase;
 import de.tum.msrg.overlay.OverlayLatency;
-import de.tum.msrg.overlay.PubSubNodeWload;
 import jist.runtime.JistAPI;
 import jist.runtime.JistAPI.Entity;
-import de.tum.msrg.message.Publication;
 
 import org.apache.log4j.Level;
 
@@ -28,12 +19,12 @@ import de.tum.msrg.utils.SimLogger;
 import de.tum.msrg.config.Configuration;
 import de.tum.msrg.config.ConfigParserException;
 
-public class BaselineSim implements Entity {
+public class PSSim implements Entity {
 	
 	private Configuration config;
 	private int noOfBrokers;
 	private int noOfTopics;
-	private BaselineOverlay overlay;
+	private PSOverlay overlay;
 	private Topology topology;
 	private WorkloadGenerator loadGen;
 	private FaultGenerator faultGen;
@@ -50,7 +41,7 @@ public class BaselineSim implements Entity {
 	private String LATENCIES_FILE_NAME = "latencies.txt";
 	private boolean skipWorkload = false;
 	
-	public BaselineSim(String simDir, long seed) throws ConfigParserException, RuntimeSimException, IOException {
+	public PSSim(String simDir, long seed) throws ConfigParserException, RuntimeSimException, IOException {
 		String configFilePath = FileUtils.joinFilePaths(simDir, SIM_CONF_FILE_NAME);
 		System.out.println("Loading sim configuration from " + configFilePath);
 		SimLogger.info("Loading sim configuration from " + configFilePath);
@@ -83,7 +74,7 @@ public class BaselineSim implements Entity {
 		System.out.println("Creating workload generator");
 		SimLogger.info("Creating workload generator");
 		loadGen = new WorkloadGenerator(config, topology, seed);
-		overlay = new BaselineOverlay(config, topology, seed);
+		overlay = new PSOverlay(config, topology, seed);
 		faultGen = new FaultGenerator();
 	}
 	
@@ -91,13 +82,8 @@ public class BaselineSim implements Entity {
 		SimLogger.info("Initializing overlay...");
 		overlay.initOverlay();
 		SimLogger.info("Generating workload...");
-		if(skipWorkload) {
-			System.err.println("WARNING: Skipping workload!");
-			simpleWloadFaultGenerator();
-		} else {
-			loadGen.generate();
-			loadGen.loadOnOverlay(overlay, loadGen.getWorkload());
-		}
+		loadGen.generate();
+		loadGen.loadOnOverlay(overlay, loadGen.getWorkload());
 		if(config.getBooleanConfig(ConfigKeys.WLOAD_LOAD_FAULTS)) {
 			System.out.println("Loading faults from " + faultsFile);
 			SimLogger.info("Loading faults from " + faultsFile);
@@ -108,59 +94,12 @@ public class BaselineSim implements Entity {
 	
 	public void runSimulation() throws ConfigParserException, RuntimeSimException, JistAPI.Continuation {
 		System.out.println("Starting simulation ...");
-		for(BaselineBroker b: overlay.getNodes()) {
+		for(PSBroker b: overlay.getNodes()) {
 			 if(!b.getFailTrace().isEmpty())
 				 SimLogger.info(b + "'s scheduled faults:\n" + b.getFailTrace());
 		}
 		overlay.getSimInterface().startSim();
 		JistAPI.sleep(maxSimTime);
-	}
-	
-	@SuppressWarnings("unused")
-	private void simpleWloadFaultGenerator() {
-		BrokerBase b0 = overlay.getBroker(0);
-		PubSubNodeWload b0wl = b0.getPubSubLoad();
-		BrokerBase b3 = overlay.getBroker(3);
-		PubSubNodeWload b3wl = b3.getPubSubLoad();
-		BrokerBase b6 = overlay.getBroker(6);
-		PubSubNodeWload b6wl = b6.getPubSubLoad();
-
-		Advertisement a0 = new Advertisement(0, new Attribute[]{Attribute.greaterThan(0)});
-		Advertisement a1 = new Advertisement(1, new Attribute[]{Attribute.greaterThan(10)});
-		Subscription s0 = new Subscription(0, new Attribute[]{Attribute.star()});
-		Subscription s1 = new Subscription(1, new Attribute[]{Attribute.star()});
-		Subscription s2 = new Subscription(1, new Attribute[]{Attribute.star()});
-
-		Publication p0_1 = new Publication(0, new float[]{1});
-		p0_1.setMatchingAdv(a0); p0_1.setSourceBroker(b0.getNodeInfo());
-		Publication p0_2 = p0_1.clonePub(); Publication p0_3 = p0_1.clonePub();
-		Publication p0_4 = p0_1.clonePub(); Publication p0_5 = p0_1.clonePub();
-
-		Publication p1_1 = new Publication(1, new float[]{15});
-		p1_1.setMatchingAdv(a1); p1_1.setSourceBroker(b0.getNodeInfo());
-		Publication p1_2 = p1_1.clonePub(); Publication p1_3 = p1_1.clonePub();
-		Publication p1_4 = p1_1.clonePub(); Publication p1_5 = p1_1.clonePub();
-		List<Publication> allPubs = Arrays.asList(
-				p0_1, p1_1, p0_2, p1_2, p0_3,
-				p1_3, p0_4, p1_4, p0_5, p1_5);
-
-		b0wl.addAdv(a0).addAdv(a1);
-		for(Publication p: allPubs)
-			b0wl.addPub(p);
-		b0wl.setPubRate(2);
-
-		b3wl.addSub(s0);
-		b6wl.addSub(s1).addSub(s2);
-//		WorkloadGenerator.performMatching(Arrays.asList(b0wl, b3wl, b6wl));
-		for(Publication p: allPubs)
-			StatsCollector.getInstance().pubGenerated(p, b0.getNodeInfo());
-	}
-	
-	private Publication generateOnePublication() {
-		Random rand = new Random();
-		Publication p = new Publication();
-		p.setAttributes(new float[] {rand.nextFloat()});
-		return p;
 	}
 
 	public void writeResults() {
@@ -220,7 +159,7 @@ public class BaselineSim implements Entity {
 		Level logLevel = Level.toLevel(args[2]);
 		System.out.println("Running baseline simulation with " + config + " seed=" + seed + " log=" + logLevel);
 		SimLogger.setLevel(logLevel);
-		BaselineSim sim = new BaselineSim(config, seed);
+		PSSim sim = new PSSim(config, seed);
 		sim.initSim();
 		sim.runSimulation();
 		sim.writeResults();

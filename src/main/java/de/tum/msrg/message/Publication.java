@@ -46,11 +46,7 @@ public class Publication {
 	public Publication clonePub() {
 		Publication clone = new Publication(this);
 		clone.matchingAdv = matchingAdv;
-//		if(subscribers != null)
-//			clone.setSubscribers(new ArrayList<NodeInfo>(subscribers));
 		clone.subscribers = subscribers;
-//		if(matchingSubscriptions != null)
-//			clone.setMatchingSubscriptions(new ArrayList<Integer>(matchingSubscriptions));
 		clone.matchingSubscriptions = matchingSubscriptions;
 		clone.publicationTime = publicationTime;
 		clone.deliveredSubs = deliveredSubs;

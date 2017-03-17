@@ -1,8 +1,7 @@
 package de.tum.msrg.overlay;
 
-import de.tum.msrg.message.BatchPubMessage;
 import de.tum.msrg.message.Message;
-import de.tum.msrg.baseline.BatchFactor;
+import de.tum.msrg.pubsub.BatchFactor;
 import de.tum.msrg.sim.StatsCollector;
 import de.tum.msrg.utils.SimLogger;
 import jist.runtime.JistAPI;
@@ -98,13 +97,13 @@ public class BrokerOutput {
 
     // calculate number of output msgs (packets required to send the message
     public static int calculateOutMsgs(Message msg) {
-        int msgPerPub = (int) Math.ceil(Message.MSG_SIZE / MTU);
-        if(msg instanceof BatchPubMessage) {
-            int batchSize = ((BatchPubMessage)msg).getBatchSize();
-            return (int) (/*msgPerPub * */batchSize * BatchFactor.getInstance().getBatchFactor(batchSize));
-        } else {
+//        int msgPerPub = (int) Math.ceil(Message.MSG_SIZE / MTU);
+//        if(msg instanceof BatchPubMessage) {
+//            int batchSize = ((BatchPubMessage)msg).getBatchSize();
+//            return (int) (/*msgPerPub * */batchSize * BatchFactor.getInstance().getBatchFactor(batchSize));
+//        } else {
             return 1; //msgPerPub;
-        }
+//        }
     }
 
     public BrokerOutputSimInterface getBrokerOutputSim() {

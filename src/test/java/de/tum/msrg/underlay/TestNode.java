@@ -5,7 +5,7 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.tum.msrg.baseline.ConfigKeys;
+import de.tum.msrg.pubsub.ConfigKeys;
 import de.tum.msrg.config.Configuration;
 import de.tum.msrg.topology.EdgeInfo;
 import de.tum.msrg.topology.NodeInfo;

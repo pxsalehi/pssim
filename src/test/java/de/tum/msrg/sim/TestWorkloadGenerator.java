@@ -1,6 +1,6 @@
 package de.tum.msrg.sim;
 
-import de.tum.msrg.baseline.ConfigKeys;
+import de.tum.msrg.pubsub.ConfigKeys;
 import de.tum.msrg.config.ConfigParserException;
 import de.tum.msrg.config.Configuration;
 import de.tum.msrg.message.Advertisement;

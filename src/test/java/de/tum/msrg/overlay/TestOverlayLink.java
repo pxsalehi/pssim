@@ -1,18 +1,15 @@
 package de.tum.msrg.overlay;
 
-import de.tum.msrg.baseline.BaselineBroker;
-import de.tum.msrg.baseline.ConfigKeys;
-import de.tum.msrg.baseline.BaselineOverlay;
+import de.tum.msrg.pubsub.PSBroker;
+import de.tum.msrg.pubsub.PSOverlay;
 import de.tum.msrg.config.ConfigParserException;
 import de.tum.msrg.config.Configuration;
-import de.tum.msrg.resources.topologies.Topologies;
 import de.tum.msrg.sim.StatsCollector;
 import de.tum.msrg.topology.Topology;
 import org.junit.After;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-import java.io.FileReader;
 import java.io.IOException;
 
 /**
@@ -22,8 +19,8 @@ public class TestOverlayLink {
 
     private Configuration config;
     private Topology topology;
-    private BaselineOverlay overlay;
-    BaselineBroker b0, b1, b2, b3, b4, b5;
+    private PSOverlay overlay;
+    PSBroker b0, b1, b2, b3, b4, b5;
     int seed;
 
     public void setUp(boolean applyLinkBW) throws RuntimeSimException, ConfigParserException, IOException {

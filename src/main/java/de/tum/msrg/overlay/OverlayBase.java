@@ -1,6 +1,6 @@
 package de.tum.msrg.overlay;
 
-import de.tum.msrg.baseline.ConfigKeys;
+import de.tum.msrg.pubsub.ConfigKeys;
 import de.tum.msrg.config.ConfigParserException;
 import de.tum.msrg.config.Configuration;
 import de.tum.msrg.topology.NodeInfo;
@@ -24,8 +24,8 @@ public abstract class OverlayBase<BrokerType extends BrokerBase> {
 	}
 	protected Configuration config;
 	protected int noOfNodes;
-	protected int noOfP;
-	protected int noOfS;
+	protected int noOfPublishers;
+	protected int noOfSubscribers;
 	protected Random randGen;
 	// underlying physical network
 	protected Network physicalNetwork;
@@ -77,8 +77,8 @@ public abstract class OverlayBase<BrokerType extends BrokerBase> {
 
 	protected void setConfigurationParameters(Configuration config) throws ConfigParserException {
 		noOfNodes = config.getIntConfig(ConfigKeys.SIM_NO_OF_NODES);
-		noOfP = config.getIntConfig(ConfigKeys.SIM_NO_OF_ADVS);
-		noOfS = config.getIntConfig(ConfigKeys.SIM_NO_OF_SUBS);
+		noOfPublishers = config.getIntConfig(ConfigKeys.SIM_NO_OF_ADVS);
+		noOfSubscribers = config.getIntConfig(ConfigKeys.SIM_NO_OF_SUBS);
 		isAdvBased = config.getBooleanConfig(ConfigKeys.SIM_IS_ADV_BASED);
 		applyLoadDelay = config.getBooleanConfig(ConfigKeys.SIM_APPLY_LOAD_DELAY);
 		BrokerOutput.applyLoadDelay = applyLoadDelay;
