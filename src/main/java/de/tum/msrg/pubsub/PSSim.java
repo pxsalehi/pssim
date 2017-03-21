@@ -33,7 +33,6 @@ public class PSSim implements Entity {
 	private long seed;
 	private String faultsFile;
 	private String resultFile;
-	private String topicStatsFile;
 	private String latenciesFile;
 	private String SIM_CONF_FILE_NAME = "sim.config";
 	private String TOPOLOGY_FILE_NAME = "topology.txt";
@@ -70,7 +69,6 @@ public class PSSim implements Entity {
 		OverlayLatency.getInstance().initialize(latenciesFile, noOfBrokers);
 		faultsFile = FileUtils.joinFilePaths(simDir, FAULTS_FILE_NAME);
 		resultFile = FileUtils.joinFilePaths(simDir, "stats" + seed + ".txt");
-		topicStatsFile = FileUtils.joinFilePaths(simDir, "topicstats" + seed + ".txt");
 		System.out.println("Creating workload generator");
 		SimLogger.info("Creating workload generator");
 		loadGen = new WorkloadGenerator(config, topology, seed);
@@ -122,30 +120,6 @@ public class PSSim implements Entity {
 		System.out.println("******************************************************");
 		System.out.println(stats);
 		System.out.println("******************************************************");
-		// write topic stats
-		BufferedWriter topicStatsOut = null;
-		try {
-			topicStatsOut = new BufferedWriter(new FileWriter(topicStatsFile));
-			int[] pop = StatsCollector.getInstance().getPopularityPerTopic();
-			int[] deliv = StatsCollector.getInstance().getDeliveryPerTopic();
-			topicStatsOut.write("topic \t pop \t deliv\n");
-			long totalTreeDeliv = StatsCollector.getInstance().getTotalDeliveredPubCount() - StatsCollector.getInstance().getTotalPubsDeliveredViaGossip();
-			double delivCDF = 0.;
-			for(int c = 0; c < noOfTopics; ++c) {
-				double topicDelivPerc = (double)deliv[c] / totalTreeDeliv;
-				delivCDF += topicDelivPerc;
-				topicStatsOut.write(c + "\t" + pop[c] + "\t" + delivCDF + '\n');
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				if(topicStatsOut != null)
-					topicStatsOut.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
 	}
 
 
@@ -166,18 +140,22 @@ public class PSSim implements Entity {
 	}
 
 	private String getStatsAsString() {
-		return  "Number of broker: " + overlay.getNoOfNodes() +
-				"\nNumber of subscribers : " + StatsCollector.getInstance().getNoOfSubscribers() +
+		return  "Number of broker: "
+				+ overlay.getNoOfNodes() +
+				"\nNumber of subscribers : "
+				+ StatsCollector.getInstance().getNoOfSubscribers() +
 				"\nWorkload distribution: "
 				+ config.getStringConfig(ConfigKeys.WLOAD_PUBLISHER_POPULARITY) +
-				"\nZipf skewness: " + config.getFloatConfig(ConfigKeys.WLOAD_ZIPF_EXPONENT) +
-				"\nPub generated : " + StatsCollector.getInstance().getTotalGeneratedPubCount() +
-				"\nPub published : " + StatsCollector.getInstance().getTotalPublishedPubCount() +
-				"\nTotal pubs sent     : " + StatsCollector.getInstance().getTotalSentPubCount() +
-				"\nGossips sent  : " + StatsCollector.getInstance().getTotalSentGossipCount() +
-				"\nGossips sent before last delivery : "
-				+ StatsCollector.getInstance().getTotalGossipsSentsBeforeLastDelivery() +
-				"\nTotal messages sent   : " + StatsCollector.getInstance().getTotalMsgsSent() +
+				"\nZipf skewness: "
+				+ config.getFloatConfig(ConfigKeys.WLOAD_ZIPF_EXPONENT) +
+				"\nPub generated : "
+				+ StatsCollector.getInstance().getTotalGeneratedPubCount() +
+				"\nPub published : "
+				+ StatsCollector.getInstance().getTotalPublishedPubCount() +
+				"\nTotal pubs sent     : "
+				+ StatsCollector.getInstance().getTotalSentPubCount() +
+				"\nTotal messages sent   : "
+				+ StatsCollector.getInstance().getTotalMsgsSent() +
 				"\nTotal packets sent    : "
 				+ StatsCollector.getInstance().getTotalSentPacketCount() +
 				"\nPackets sent per broker 99th: "
@@ -187,72 +165,26 @@ public class PSSim implements Entity {
 				"\nNo Of publisher brokers: " + StatsCollector.getInstance().getNoOfPublisherBrokers() +
 				"\nPackets sent per publisher avg: "
 				+ StatsCollector.getInstance().getAveragePacketSentCountPerPublisher() +
-				"\nGossips received: " + StatsCollector.getInstance().getTotalReceivedGossipCount() +
 				"\nTotal pubs delivered : "
 				+ StatsCollector.getInstance().getTotalDeliveredPubCount() +
 				"\nPercentage of local pub deliveries: "
 				+ StatsCollector.getInstance().getPercentageOfLocalDelivery() +
-				"\nPubs delivered via gossip: "
-				+ StatsCollector.getInstance().getTotalPubsDeliveredViaGossip() +
-				"\nPubs delivered via direct link: "
-				+ StatsCollector.getInstance().getTotalPubsDeliveredViaDirectLink() +
-				"\nPubs delivered via batching: "
-				+ StatsCollector.getInstance().getTotalPubsDeliveredViaBatch() +
-				"\nGossip delivery false positive rate: "
-				+ StatsCollector.getInstance().getGossipDeliveryFalsePositiveRate() +
-				"\nTree delivery latency  99th: "
-				+ StatsCollector.getInstance().get99thTreeDeliveryLatency() +
-				"\nTree delivery hopcount  99th: "
-				+ StatsCollector.getInstance().get99thTreeDeliveryHopcount() +
-				"\nGossip delivery latency 99th: "
-				+ StatsCollector.getInstance().getGossipDeliveryLatencyPercentile(0.99) +
-				"\nGossip delivery latency 90th: "
-				+ StatsCollector.getInstance().getGossipDeliveryLatencyPercentile(0.90) +
-				"\nGossip delivery hopcount 99th: "
-				+ StatsCollector.getInstance().get99thGossipDeliveryHopcount() +
-				"\nBatch delivery latency 99th: "
-				+ StatsCollector.getInstance().getBatchDeliveryLatencyPercentile(0.99) +
-				"\nBatch delivery latency 90th: "
-				+ StatsCollector.getInstance().getBatchDeliveryLatencyPercentile(0.90) +
-				"\nBatch delivery hopcount 99th: "
-				+ StatsCollector.getInstance().get99thBatchDeliveryHopcount() +
-				"\ndirect link delivery latency 99th: "
-				+ StatsCollector.getInstance().getDirectLinkDeliveryLatencyPercentile(0.99) +
-				"\ndirect link delivery latency 90th: "
-				+ StatsCollector.getInstance().getDirectLinkDeliveryLatencyPercentile(0.90) +
-				"\ndirect link delivery hopcount 99th: "
-				+ StatsCollector.getInstance().get99thDirectLinkDeliveryHopcount() +
 				"\nTotal delivery latency  99th: "
 				+ StatsCollector.getInstance().get99thTotalDeliveryLatency() +
 				"\nTotal delivery hopcount  99th: "
 				+ StatsCollector.getInstance().get99thTotalDeliveryHopcount() +
-				"\nAverage match count: " + StatsCollector.getInstance().getAverageUtilRatio().x +
-				"\nAverage avg path length: " + StatsCollector.getInstance().getAverageUtilRatio().y +
-				"\nAverage gossip per broker: "
-				+ StatsCollector.getInstance().getAvgGossipBeforeLastDeliveryPerBroker() +
-				"\nNumber of gossip groups: " + StatsCollector.getInstance().getNoOfGossipGroups() +
-				"\nAverage queue size: " + StatsCollector.getInstance().getAverageQueueSize() +
-				"\n99th max queue size: " + StatsCollector.getInstance().get99thQueueSize() +
-				"\nPerc. of direct out of tree delivery per publisher 99th: "
-				+ StatsCollector.getInstance().get99thDirectDeliveryPerPublisher() +
-				"\nNumber of direct ueberlinks 99th: "
-				+ StatsCollector.getInstance().get99thMsgsSentForEachPublishPerPublisher() +
-				"\nLast delivery : " + StatsCollector.getInstance().getLastPubDeliveryTime() +
-				"\nDelivery rate : " + StatsCollector.getInstance().getPubDeliveryRate() +
-				"\nPubs sent via gossip: "
-				+ StatsCollector.getInstance().getTotalPubsSentViaGossip() +
-				"\nPubs sent via batching: "
-				+ StatsCollector.getInstance().getTotalPubsSentViaBatching() +
-				"\nPubs sent via direct link: "
-				+ StatsCollector.getInstance().getTotalPubsSentViaDirectLink() +
-				"\nUnsuccessful retrieve from B0(root): "
-				+ StatsCollector.getInstance().getUnsuccessfulRetrieveCount(0) +
-				"\nAverage pub match per received gossip: "
-				+ StatsCollector.getInstance().getAverageMatchCountPerGossip() +
-				"\nAverage pub gain: " + StatsCollector.getInstance().getAveragePubGain() +
-				"\n99th perc. pub gain: " + StatsCollector.getInstance().getPercentilePubGain(0.99) +
-				"\n50th perc. pub gain: " + StatsCollector.getInstance().getPercentilePubGain(0.50) +
-				"\nAverage throughput: " + StatsCollector.getInstance().getAverageThroughput() +
+				"\nAverage match count: "
+				+ StatsCollector.getInstance().getAverageUtilRatio().x +
+				"\nAverage queue size: "
+				+ StatsCollector.getInstance().getAverageQueueSize() +
+				"\n99th max queue size: "
+				+ StatsCollector.getInstance().get99thQueueSize() +
+				"\nLast delivery : "
+				+ StatsCollector.getInstance().getLastPubDeliveryTime() +
+				"\nDelivery rate : "
+				+ StatsCollector.getInstance().getPubDeliveryRate() +
+				"\nAverage throughput: "
+				+ StatsCollector.getInstance().getAverageThroughput() +
 				"\nTotal pure forward msg count: "
 				+ StatsCollector.getInstance().getTotalPureForwardCount();
 	}

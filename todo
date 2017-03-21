@@ -1,4 +1,6 @@
 - update config file
+- read publisher popularity from file
+- add more sample sims to test/resources
 - pass map to create batch factor (only for capacity manager)
 - add input capacity
 - config as singleton
@@ -6,3 +8,4 @@
 - cleanup workload, create small classes for each part
 - support link drop rate
 - support java 8
+- tidy up distribution values
